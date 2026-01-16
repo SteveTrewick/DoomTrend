@@ -413,6 +413,21 @@ public actor TrendDetector {
         return topics
     }
 
+    public func extractTerms(from item: NewsItem) -> [String] {
+        let candidates = extractCandidates(from: item)
+        var seen = Set<String>()
+        var terms: [String] = []
+        terms.reserveCapacity(candidates.count)
+
+        for candidate in candidates {
+            if seen.insert(candidate.term).inserted {
+                terms.append(candidate.term)
+            }
+        }
+
+        return terms
+    }
+
     public func reset() {
         buckets.removeAll()
         termSamples.removeAll()
@@ -489,7 +504,7 @@ public actor TrendDetector {
             bucket.sourceItemCounts[sourceID] = count + 1
         }
 
-        let terms = extractTerms(from: item)
+        let terms = extractCandidates(from: item)
         guard !terms.isEmpty else {
             buckets[bucketKey] = bucket
             return
@@ -520,7 +535,7 @@ public actor TrendDetector {
         buckets[bucketKey] = bucket
     }
 
-    private func extractTerms(from item: NewsItem) -> [TermCandidate] {
+    private func extractCandidates(from item: NewsItem) -> [TermCandidate] {
         let titleText = stripURLSubstrings(from: item.title)
         let summary = item.body.map { String($0.prefix(configuration.summaryMaxLength)) } ?? ""
         let bodyText = stripURLSubstrings(from: summary)
