@@ -15,10 +15,10 @@ DoomTrend is a lightweight Swift package for detecting trending topics from a st
 - Swift 6.2
 
 ## Installation
-Add the package dependency (local path or git URL if published):
+Add the package dependency:
 
 ```swift
-.package(path: "../DoomTrend")
+.package(url: "https://github.com/SteveTrewick/DoomTrend.git", from: "0.0.1")
 ```
 
 Then depend on the product:
